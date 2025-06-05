@@ -1,0 +1,158 @@
+type: collection.insomnia.rest/5.0
+name: Investments
+meta:
+  id: wrk_2cb1e2d9d6734a9883ec3400126eb600
+  created: 1749134833343
+  modified: 1749134833343
+collection:
+  - url: 127.0.0.1:8000/api/v1/token/
+    name: Token
+    meta:
+      id: req_4d84ddc694674430b30bb604d93dc7de
+      created: 1749134885445
+      modified: 1749135079619
+      isPrivate: false
+      sortKey: -1749134885445
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"username": "admin",
+        	"password": "admin"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: 127.0.0.1:8000/api/v1/token/refresh/
+    name: Token | refresh
+    meta:
+      id: req_00a92cf6adc547c6a59fd92034302b84
+      created: 1749135172932
+      modified: 1749135231570
+      isPrivate: false
+      sortKey: -1749004286911.5
+    method: POST
+    body:
+      mimeType: application/json
+      text: >-
+        {
+        	"refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0OTIyMTQ1NywiaWF0IjoxNzQ5MTM1MDU3LCJqdGkiOiI4ZjExODAyMjU3NDY0ZDMwYjIwNTBmYzkwZTk0MDQzMiIsInVzZXJfaWQiOjF9.pLtMmYCDl0mboVBdQbhsG8WoTEC9Ngf3rQ2nQgYLRcQ"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: 127.0.0.1:8000/api/v1/investments/
+    name: Investment | list
+    meta:
+      id: req_00976d28a5c847318cccdc38b6d51db0
+      created: 1749135295837
+      modified: 1749138307802
+      isPrivate: false
+      sortKey: -1748938987644.75
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.1.0
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MTM4NTkwLCJpYXQiOjE3NDkxMzgyOTAsImp0aSI6IjY0MzY0NTI5ZjJhZjQ3MzFiZTk5OGU0MDFhYTdjNzllIiwidXNlcl9pZCI6MX0.k94_2ypefZYMmZbybf688mC9_BBTxAmypPo60Wu4Ha4
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: 127.0.0.1:8000/api/v1/investments/
+    name: Investment | create
+    meta:
+      id: req_877254510ee14edca27972f1c1fd8d6c
+      created: 1749135433892
+      modified: 1749138022660
+      isPrivate: false
+      sortKey: -1748906338011.375
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"asset_name": "Tesla Model 3",
+        	"amount_invested": "50000.00",
+        	"purchase_date": "2024-01-15T10:00:00Z",
+        	"current_value": "52500.00",
+        	"is_active": true
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.1.0
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MTM4MjY2LCJpYXQiOjE3NDkxMzc5NjYsImp0aSI6IjNlYWFjNDMwNmI4OTQ0YjBiMjRkNWMyYjZlMjNiMTE2IiwidXNlcl9pZCI6MX0.BzgZ0vAsdVymJhCpH7WSNnTBMgXdKdVoPiIif35A1gQ
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: 127.0.0.1:8000/api/v1/investments/summary/
+    name: Investment | summary
+    meta:
+      id: req_a354db494e384e8e8410792722412f77
+      created: 1749138385609
+      modified: 1749138489332
+      isPrivate: false
+      sortKey: -1748890013194.6875
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.1.0
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MTM4NzY5LCJpYXQiOjE3NDkxMzg0NjksImp0aSI6Ijk5M2QxYzJiNTM0MTQyZjFiZjljMTA1NWIxMjcwMjA1IiwidXNlcl9pZCI6MX0.DEB0rwmKK4qcCX0Q-t5xcKXs4DNWxFyv8e0G-nuAGV0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_ca64277e404c67e24ccd2489e0dab5936bb647c5
+    created: 1749134833393
+    modified: 1749134833393
+environments:
+  name: Base Environment
+  meta:
+    id: env_ca64277e404c67e24ccd2489e0dab5936bb647c5
+    created: 1749134833363
+    modified: 1749134833363
+    isPrivate: false
