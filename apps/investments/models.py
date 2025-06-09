@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Currency(models.Model):
@@ -13,7 +13,7 @@ class Currency(models.Model):
     
 
 class UserInvestment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     asset_name = models.CharField()
     amount_invested = models.DecimalField(max_digits=15, decimal_places=2)
     purchase_date = models.DateTimeField()
@@ -36,7 +36,7 @@ class TransactionChoices(models.TextChoices):
 
 
 class TransactionLog(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     transaction_type = models.CharField(max_length=10, choices=TransactionChoices.choices, default=TransactionChoices.DEPOSIT)
     amount = models.DecimalField(max_digits=15, decimal_places=2)
     timestamp = models.DateTimeField()
@@ -44,7 +44,7 @@ class TransactionLog(models.Model):
     
 
 class UserWallet(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, unique=True)
     balance = models.DecimalField(max_digits=20, decimal_places=8, default=0)
