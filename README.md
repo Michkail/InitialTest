@@ -344,7 +344,7 @@ mutation {
         refreshToken
         payload {
             username
-		}
+        }
     }
 }
 ```
@@ -464,14 +464,14 @@ query {
 ```graphql
 query {
     investments {
-    id
-    assetName
-    amountInvested
-    currentValue
-    profitLoss
-    profitLossPercentage
-    purchaseDate
-    isActive
+        id
+        assetName
+        amountInvested
+        currentValue
+        profitLoss
+        profitLossPercentage
+        purchaseDate
+        isActive
         currency {
             code
             network
@@ -494,8 +494,8 @@ query {
                 "purchaseDate": "2024-01-15T10:00:00Z",
                 "isActive": true,
                 "currency": {
-					"code": "USDT",
-					"network": "ERC20"
+                    "code": "USDT",
+                    "network": "ERC20"
                 }
             }
         ]
