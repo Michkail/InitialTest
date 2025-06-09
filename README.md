@@ -59,7 +59,7 @@ uv sync
 │   │   ├── admin.py
 │   │   ├── tests.py
 │   │   ├── views.py
-├── ├──	investments
+│   ├── investments
 │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   ├── 0002_rename_currrent_value_userinvestment_current_value.py
@@ -158,6 +158,42 @@ uv run manage.py makemigrations
 ### migrate
 ```bash
 uv run manage.py migrate
+```
+
+### dephne
+```bash
+uv run dephne config.asgi.application
+```
+
+### celery | worker
+```bash
+uv run celery -A config worker -l info
+```
+
+### celery | beat
+```bash
+uv run celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+```
+
+## Deployment orchestration
+### build image
+```bash
+docker build -t orchest-investment:1.0.0 .
+```
+
+### upstream redis
+```bash
+docker compose -f docker-compose.redis.yml up -d
+```
+
+### upstream postgre
+```bash
+docker compose -f docker-compose.postgre.yml up -d
+```
+
+### run project
+```bash
+docker compose -f docker-compose.django.yml up -d
 ```
 
 ## API Guidance
@@ -279,7 +315,7 @@ Bearer <access_token>
 #### *response*
 ```json
 [
-	{
+    {
         "asset_name": "Tesla",
         "amount_invested": "2000.00",
         "purchase_date": "2024-01-10T00:00:00Z",
@@ -300,12 +336,240 @@ Bearer <access_token>
 
 ## GraphQL Guidance
 ### Authenication
-###### Token Auth
+###### mutation | tokenAuth
 ```graphql
 mutation {
-	tokenAuth(username: "admin", password: "admin") {
-		token
-		refreshToken
-	}
+    tokenAuth(username: "admin", password: "admin") {
+        token
+        refreshToken
+        payload {
+            username
+		}
+    }
+}
+```
+###### response
+```json
+{
+    "data": {
+        "tokenAuth": {
+            "token": "<access_token>",
+            "refreshToken": "<refresh_token>",
+            "payload": {
+                "username": "admin"
+            }
+        }
+    }
+}
+```
+
+###### mutation | refreshToken
+```graphql
+mutation {
+    refreshToken(refreshToken: "<token>") {
+        token
+    }
+}
+```
+###### response
+```json
+{
+    "data": {
+        "refreshToken": {
+            "token": "<new_access_token>"
+        }
+    }
+}
+```
+
+### Create Investment
+###### mutation | createInvestment
+```graphql
+mutation {
+    createInvestment(input: {
+        assetName: "Gold",
+        amountInvested: "5000.00",
+        purchaseDate: "2024-04-01T00:00:00Z",
+        currentValue: "5100.00",
+        isActive: true,
+        currencyId: 1
+    }) {
+        investment {
+            id
+            assetName
+            profitLoss
+            profitLossPercentage
+        }
+    }
+}
+```
+###### response
+```json
+{
+    "data": {
+        "createInvestment": {
+            "investment": {
+                "id": 8,
+                "assetName": "Gold",
+                "profitLoss": "100.00",
+                "profitLossPercentage": "2.00"
+            }
+        }
+    }
+}
+```
+
+### Investment Summary
+###### query | investmentSummary
+```graphql
+query {
+    investmentSummary {
+        totalInvested
+        totalValue
+        totalProfitLoss
+        activeInvestments
+        bestPerforming
+        worstPerforming
+        portfolioRoiPercentage
+        insights {
+            averageHoldingPeriodDays
+            averageInvestmentSize
+        }
+    }
+}
+```
+###### response
+```json
+{
+    "data": {
+        "investmentSummary": {
+            "totalInvested": "416000.00",
+            "totalValue": "132900.00",
+            "totalProfitLoss": "-283100.00",
+            "activeInvestments": 4,
+            "bestPerforming": "Tesla Model 3",
+            "worstPerforming": "BMW M3",
+            "portfolioRoiPercentage": -68.05,
+            "insights": {
+                "averageHoldingPeriodDays": 1238,
+                "averageInvestmentSize": 104000.00
+            }
+        }
+    }
+}
+```
+
+### List All Investment
+###### query | investment
+```graphql
+query {
+    investments {
+    id
+    assetName
+    amountInvested
+    currentValue
+    profitLoss
+    profitLossPercentage
+    purchaseDate
+    isActive
+        currency {
+            code
+            network
+        }
+    }
+}
+```
+###### response
+```json
+{
+    "data": {
+        "investments": [
+            {
+                "id": 1,
+                "assetName": "Tesla Model 3",
+                "amountInvested": "50000.00",
+                "currentValue": "52500.00",
+                "profitLoss": "2500.00",
+                "profitLossPercentage": "5.00",
+                "purchaseDate": "2024-01-15T10:00:00Z",
+                "isActive": true,
+                "currency": {
+					"code": "USDT",
+					"network": "ERC20"
+                }
+            }
+        ]
+    }
+}
+```
+
+### Get Investment by ID
+###### query | investment(id: ID!)
+```graphql
+query {
+    investment(id: 1) {
+        id
+        assetName
+        amountInvested
+        currentValue
+        profitLoss
+        profitLossPercentage
+        purchaseDate
+        isActive
+        currency {
+            code
+        }
+    }
+}
+```
+
+### List Yield Payments
+###### query | yieldPayment
+```graphql
+query {
+    yieldPayments {
+        id
+        amount
+        currency {
+            code
+        }
+        paymentDate
+        transactionHash
+        status
+        investment {
+            assetName
+        }
+    }
+}
+```
+
+### List User Wallets
+###### query | wallets
+```graphql
+query {
+    wallets {
+        id
+        address
+        balance
+        lockedBalance
+        currency {
+            code
+            network
+        }
+    }
+}
+```
+
+### List Available Currencies 
+###### query | currencies
+```graphql
+query {
+    currencies {
+        id
+        code
+        network
+        contractAddress
+        decimalPlaces
+    }
 }
 ```
