@@ -269,3 +269,43 @@ Bearer <access_token>
     }
 }
 ```
+
+### Investment summary
+###### POST /api/v1/investment/bulk-create/
+#### *Authorization*
+```bash
+Bearer <access_token>
+```
+#### *response*
+```json
+[
+	{
+        "asset_name": "Tesla",
+        "amount_invested": "2000.00",
+        "purchase_date": "2024-01-10T00:00:00Z",
+        "current_value": "2100.00",
+        "is_active": true,
+        "currency": 1
+	},
+    {
+        "asset_name": "Apple",
+        "amount_invested": "3000.00",
+        "purchase_date": "2024-01-20T00:00:00Z",
+        "current_value": "3200.00",
+        "is_active": true,
+        "currency": 1
+    }
+]
+```
+
+## GraphQL Guidance
+### Authenication
+###### Token Auth
+```graphql
+mutation {
+	tokenAuth(username: "admin", password: "admin") {
+		token
+		refreshToken
+	}
+}
+```
