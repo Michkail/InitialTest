@@ -1,7 +1,7 @@
 from celery import shared_task
-from apps.wallets.services.exchange_service import update_currency_rates_from_sources
+from apps.wallets.services.exchange_service import convert_currency
 
 
 @shared_task
 def update_currency_rates():
-    update_currency_rates_from_sources()
+    convert_currency()
