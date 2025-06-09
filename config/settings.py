@@ -137,7 +137,7 @@ CACHES = {
 }
 
 CELERY_BROKER_URL = config('CELERY_BROKER_URL')
-CELERY_REUSLT_BACKEND = config('CELERY_RESULT_BACKEND')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND')
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
