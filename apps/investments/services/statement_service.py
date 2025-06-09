@@ -3,7 +3,7 @@ from reportlab.pdfgen import canvas
 from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from apps.notifications.models import UserInvestment
+from apps.investments.models import UserInvestment
 
 
 class StatementService:
