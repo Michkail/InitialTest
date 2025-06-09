@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     # Additional Libs
     'graphene_django',
     'channels',
+    'django_celery_beat',
 
     # Apps
     'apps.analytics',
@@ -135,6 +136,8 @@ CACHES = {
     }
 }
 
+CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+CELERY_REUSLT_BACKEND = config('CELERY_RESULT_BACKEND')
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
