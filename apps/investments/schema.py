@@ -55,6 +55,15 @@ class InvestmentSummaryType(graphene.ObjectType):
     insights = graphene.JSONString()
 
 
+class InvestmentInput(graphene.InputObjectType):
+    asset_name = graphene.String(required=True)
+    amount_invested = graphene.String(required=True)
+    purchase_date = graphene.DateTime(required=True)
+    current_value = graphene.String(required=True)
+    is_active = graphene.Boolean(required=True)
+    currency_id = graphene.ID(required=True)
+
+
 class CreateInvestment(graphene.Mutation):
     class Arguments:
         input = InvestmentInput(required=True)
@@ -65,15 +74,14 @@ class CreateInvestment(graphene.Mutation):
     def mutate(self, info, input):
         user = info.context.user
         currency = Currency.objects.get(id=input.currency_id)
-        investment = UserInvestment.objects.create(
-            user=user,
-            asset_name=input.asset_name,
-            amount_invested=input.amount_invested,
-            current_value=input.current_value,
-            purchase_date=input.purchase_date,
-            is_active=input.is_active,
-            currency=currency
-        )
+        investment = UserInvestment.objects.create(user=user,
+                                                   asset_name=input.asset_name,
+                                                   amount_invested=input.amount_invested,
+                                                   current_value=input.current_value,
+                                                   purchase_date=input.purchase_date,
+                                                   is_active=input.is_active,
+                                                   currency=currency)
+        
         return CreateInvestment(investment=investment)
     
 
@@ -110,6 +118,7 @@ class Query(graphene.ObjectType):
         service = InvestmentService()
         data = service.calculate_portfolio_performance(info.context.user)
         insights = service.get_investment_insights(info.context.user)
+        
         return InvestmentSummaryType(**data, insights=insights)
 
 

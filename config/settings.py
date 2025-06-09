@@ -54,7 +54,6 @@ INSTALLED_APPS = [
 
     # Additional Libs
     'graphene_django',
-    'graphql_jwt.refresh_token',
     'channels',
     'django_celery_beat',
 
@@ -120,7 +119,7 @@ TEMPLATES = [
 GRAPHENE = {
     "SCHEMA": "config.schema.schema",
     "MIDDLEWARE": [
-        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+        "django_graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],
 }
 
@@ -226,6 +225,6 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django_graphql_jwt.backends.JSONWebTokenBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
