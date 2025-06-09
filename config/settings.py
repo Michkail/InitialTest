@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-23_&r3x$lo^!#8x+x%2x13#ebe3#b=hww4+n!-ckm!c@$)!ux6'
+SECRET_KEY = config('KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
+
+SECURE_SSL_REDIRECT = True
+
+SESSION_COOKIE_SECURE = True
+
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = config('ALLOWED_CORS', default=[], cast=Csv())
+
+CSRF_TRUSTED_ORIGINS = config('TRUSTED_CSRF', default=[], cast=Csv())
+CSRF_COOKIE_SECURE = True
+
+USE_X_FORWARDED_HOST = config('FORWARDED_HOST', default=False, cast=bool)
+
 
 
 # Application definition
@@ -37,7 +51,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.investments'
+
+    # Additional Libs
+    'graphene_django',
+    'channels',
+
+    # Apps
+    'apps.analytics',
+    'apps.integrations',
+    'apps.investments',
+    'apps.notifications',
+    'apps.users',
+    'apps.wallets'
 ]
 
 MIDDLEWARE = [
@@ -49,6 +74,29 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE += [
+    'config.middleware.audit_middleware.AuditLogMiddleware',
+]
+
+LOGGING = {
+    'version': 1,
+    'handlers': {
+        'audit_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/audit.log',
+        },
+    },
+    'loggers': {
+        'audit': {
+            'handlers': ['audit_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -69,14 +117,46 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+ASGI_APPLICATION = 'config.routing.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(config('CHANNEL_HOST'), 6379)]
+        }
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": config('REDIS_LOCATION'),
+    }
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+DATABASE_ROUTERS = ['config.db_routers.AnalyticsRouter']
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('POSTGRES_DB'),
+        'HOST': config('POSTGRES_HOST'),
+        'PORT': config('POSTGRES_PORT'),
+        'PASSWORD': config('POSTGRES_PASS'),
+        'USER': config('POSTGRES_USER')
+    },
+    'replica': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('REPL_DB'),
+        'HOST': config('REPL_HOST'),
+        'PORT': config('REPL_PORT'),
+        'PASSWORD': config('REPL_PASS'),
+        'USER': config('REPL_USER')
     }
 }
 

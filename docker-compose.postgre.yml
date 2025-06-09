@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:17.4
+    container_name: cont-psql
+    restart: always
+    environment:
+      TZ: "Asia/Jakarta"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
