@@ -7,7 +7,7 @@ from django.db import transaction
 from django.utils import timezone
 from .models import UserInvestment, TransactionLog, TransactionChoices
 from .serializers import UserInvestmentSerializer, CreateUserInvestmentSerializer
-from .services import InvestmentService
+from .services.statement_service import InvestmentService
 import uuid
 
 
