@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 class InvestmentType(DjangoObjectType):
     class Meta:
         model = UserInvestment
-        fields = ("id", "asset_name", "amount_invested", "currrent_value", "purchase_date", "currency")
+        fields = ("id", "asset_name", "amount_invested", "current_value", "purchase_date", "currency")
 
 
 class InvestmentSummaryType(graphene.ObjectType):

@@ -21,7 +21,7 @@ class InvestmentConsumer(AsyncWebsocketConsumer):
             data = [{
                 "asset": inv.asset_name,
                 "amount": str(inv.amount_invested),
-                "value": str(inv.currrent_value)
+                "value": str(inv.current_value)
             } for inv in investments]
 
             await self.send_json({"type": "portfolio_data", "data": data})

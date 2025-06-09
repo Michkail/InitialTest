@@ -1,5 +1,5 @@
 from django.core.cache import cache
-from apps.investments.services import InvestmentService
+from .statement_service import InvestmentService
 
 
 class CachedInvestmentService:

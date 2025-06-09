@@ -18,31 +18,128 @@ uv sync
 ## Project tree
 ```bash
 ┌── config
+│   ├──	midddleware
+│   │   ├── __init__.py
+│   │   ├── audit_middleware.py
 │   ├── asgi.py
-│   ├── __init__.py
+│   ├── db_routers.py
+│   ├── routing.py
+│   ├── schema.py
 │   ├── settings.py
 │   ├── urls.py
 │   ├── wsgi.py
 ├── apps
-│   ├── investments
+│   ├── analytics
+│   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   ├── services
+│   │   │   ├── __init__.py
+│   │   │   ├── summary_reader.py
+│   │   ├── sql
+│   │   │   ├── investment_summary.sql
+│   │   ├── models.py
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── admin.py
+│   │   ├── tests.py
+│   │   ├── views.py
+│   ├── integrations
+│   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   ├── contracts
+│   │   │   ├── __init__.py
+│   │   │   ├── settlement.py
+│   │   ├── exchange
+│   │   │   ├── __init__.py
+│   │   │   ├── providers.py
+│   │   ├── models.py
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── exchange_providers.py
+│   │   ├── admin.py
+│   │   ├── tests.py
+│   │   ├── views.py
+├── ├──	investments
 │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   ├── 0002_rename_currrent_value_userinvestment_current_value.py
-│   │   │   ├── 0001_initial.py
-│   │   ├── services.py
+│   │   ├── ml
+│   │   │   ├── __init__.py
+│   │   │   ├── fraud_detector.py
+│   │   │   ├── train_model.py
+│   │   ├── services
+│   │   │   ├── __init__.py
+│   │   │   ├── cached_investment_service.py
+│   │   │   ├── matching_engine.py
+│   │   │   ├── statement_service.py
+│   │   │   ├── yield_calculation_service.py
+│   │   ├── utils
+│   │   │   ├── __init__.py
+│   │   │   ├── notification.py
 │   │   ├── models.py
 │   │   ├── serializers.py
 │   │   ├── __init__.py
+│   │   ├── validators.py
+│   │   ├── tasks.py
+│   │   ├── schema.py
+│   │   ├── routing.py
+│   │   ├── pagination.py
+│   │   ├── consumers.py
+│   │   ├── constants.py
 │   │   ├── apps.py
 │   │   ├── admin.py
 │   │   ├── tests.py
 │   │   ├── urls.py
 │   │   ├── views.py
+│   ├── notifications
+│   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   ├── models.py
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── events.py
+│   │   ├── admin.py
+│   │   ├── tests.py
+│   │   ├── views.py
+│   ├── users
+│   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   ├── models.py
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── permissions.py
+│   │   ├── admin.py
+│   │   ├── tests.py
+│   │   ├── views.py
+│   ├── wallets
+│   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   ├── services
+│   │   │   ├── __init__.py
+│   │   │   ├── exchange_service.py
+│   │   │   ├── reconciliation_service.py
+│   │   │   ├── transaction_engine.py
+│   │   ├── utils
+│   │   │   ├── __init__.py
+│   │   │   ├── notifications.py
+│   │   ├── models.py
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── tasks.py
+│   │   ├── admin.py
+│   │   ├── tests.py
+│   │   ├── views.py
 ├── pyproject.toml
 ├── db.sqlite3
 ├── README.md
+├── insomnia-collection.yaml
+├── Dockerfile
+├── docker-comspose.django.yml
+├── docker-comspose.postgre.yml
+├── docker-comspose.redis.yml
 ├── .gitignore
 ├── .python-version
+├── .env-example
 ├── manage.py
 └── uv.lock
 ```

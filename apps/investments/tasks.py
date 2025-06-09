@@ -2,8 +2,7 @@ from asgiref.sync import async_to_sync
 from celery import shared_task
 from channels.layers import get_channel_layer
 from django.contrib.auth.models import User
-from apps.investments.services import InvestmentService
-from apps.investments.services.statement_service import StatementService
+from apps.investments.services.statement_service import StatementService, InvestmentService
 from apps.investments.services.yield_calculation_service import YieldCalculationService
 from apps.investments.utils.notifications import notify_yield_payment
 

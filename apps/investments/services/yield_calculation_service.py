@@ -19,7 +19,7 @@ class YieldCalculationService:
             if days_elapsed < 1:
                 continue
 
-            principal = inv.currrent_value
+            principal = inv.current_value
             tier_name, tier_rate = determine_investment_tier(principal)
             daily_rate = tier_rate / Decimal("100.0") / Decimal("365")
 
