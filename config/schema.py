@@ -1,9 +1,15 @@
+import graphql_jwt
 import graphene
-import apps.investments.schema as investments_schema
+from apps.investments.schema import Query as InvestmentQuery, Mutation as InvestmentMutation
 
 
-class Query(investments_schema.Query,
-            graphene.ObjectType):
+class Query(InvestmentQuery, graphene.ObjectType):
     pass
 
-schema = graphene.Schema(query=Query)
+
+class Mutation(InvestmentMutation, graphene.ObjectType):
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
+
+schema = graphene.Schema(query=Query, mutation=Mutation)

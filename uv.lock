@@ -523,7 +523,7 @@ requires-dist = [
     { name = "daphne", specifier = ">=4.2.0" },
     { name = "django-celery-beat", specifier = ">=2.8.1" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.5.0" },
-    { name = "graphene-django", specifier = ">=3.2.3" },
+    { name = "graphene-django", extras = ["jwt"], specifier = ">=3.2.3" },
     { name = "numpy", specifier = ">=2.3.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
     { name = "pyotp", specifier = ">=2.9.0" },

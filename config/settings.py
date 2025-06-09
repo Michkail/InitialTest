@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     # Additional Libs
     'graphene_django',
+    'graphql_jwt.refresh_token',
     'channels',
     'django_celery_beat',
 
@@ -115,6 +116,14 @@ TEMPLATES = [
         },
     },
 ]
+
+GRAPHENE = {
+    "SCHEMA": "config.schema.schema",
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+    ],
+}
+
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -215,3 +224,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'apps.investments.pagination.InvestmentPagination',
     'PAGE_SIZE': 10
 }
+
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
