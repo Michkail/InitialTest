@@ -36,3 +36,17 @@ services:
       - .:/app
     env_file:
       - .env
+
+  flower:
+    image: orchest-investment:1.0.0
+    container_name: investment-flower
+    restart: always
+    command: ["sh", "-c", "uv run celery -A config flower --port=5555"]
+    environment:
+      TZ: "Asia/Jakarta"
+    volumes:
+      - .:/app
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
