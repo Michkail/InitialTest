@@ -13,7 +13,8 @@ impl Blockchain {
             0,
             Utc::now().timestamp_millis() as u128,
             "0".into(),
-            vec![]
+            vec![],
+            4
         );
         Self {
             chain: vec![genesis],
@@ -25,23 +26,26 @@ impl Blockchain {
         self.pending_transactions.push(tx);
     }
 
-    pub fn mine_block(&mut self) -> Block {
-        let txs: Vec<String> = self.pending_transactions.iter()
-            .map(|t| serde_json::to_string(t).unwrap())
+    pub fn mine_block(&mut self) -> &Block {
+        let txs: Vec<String> = self.pending_transactions
+            .iter()
+            .map(|t| format!("{:?}", t))
             .collect();
-
+    
         let last_block = self.chain.last().unwrap();
+    
         let block = Block::new(
             self.chain.len() as u64,
-            Utc::now().timestamp_millis() as u128,
+            chrono::Utc::now().timestamp_millis() as u128,
             last_block.hash.clone(),
             txs,
+            4, // difficulty: jumlah nol di awal hash
         );
-
+    
         self.pending_transactions.clear();
-        self.chain.push(block.clone());
-        block
-    }
+        self.chain.push(block);
+        self.chain.last().unwrap()
+    }    
 
     pub fn get_latest_block(&self) -> Block {
         self.chain.last().unwrap().clone()

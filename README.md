@@ -588,7 +588,7 @@ query {
 ```json
 {
     "data": {
-        "allBlocks": "[{\"hash\": \"e24d032c5906e35f8da2ff39ccde24df3d4b23ea9d609df7f65522e0a9cba946\", \"index\": 0, \"prev_hash\": \"0\", \"timestamp\": 1750000581506, \"transactions\": []}]"
+        "allBlocks": "[{\"hash\": \"0000af9a5bec122889ac1ad16748ff5911ee95d712a5cbd38b7e063cc0f396c7\", \"index\": 0, \"nonce\": 10399, \"prev_hash\": \"0\", \"timestamp\": 1750012370965, \"transactions\": []}, {\"hash\": \"00007c9023fea2692e700363bfa72c581bb5195a4321213d092d82cb5e47131c\", \"index\": 1, \"nonce\": 42650, \"prev_hash\": \"0000af9a5bec122889ac1ad16748ff5911ee95d712a5cbd38b7e063cc0f396c7\", \"timestamp\": 1750012443263, \"transactions\": []}]"
     }
 }
 ```
@@ -604,7 +604,7 @@ query {
 ```json
 {
     "data": {
-        "latestBlock": "{\"hash\": \"e24d032c5906e35f8da2ff39ccde24df3d4b23ea9d609df7f65522e0a9cba946\", \"index\": 0, \"prev_hash\": \"0\", \"timestamp\": 1750000581506, \"transactions\": []}"
+        "latestBlock": "{\"hash\": \"00007c9023fea2692e700363bfa72c581bb5195a4321213d092d82cb5e47131c\", \"index\": 1, \"nonce\": 42650, \"prev_hash\": \"0000af9a5bec122889ac1ad16748ff5911ee95d712a5cbd38b7e063cc0f396c7\", \"timestamp\": 1750012443263, \"transactions\": []}"
     }
 }
 ```
@@ -647,7 +647,7 @@ mutation {
     "data": {
         "mineBlock": {
             "ok": true,
-            "block": "{\"hash\": \"e4cb8377b0d7ab94cd465f7888a9a81654d14cb76665a79d6fee8307ccc37605\", \"index\": 1, \"prev_hash\": \"e24d032c5906e35f8da2ff39ccde24df3d4b23ea9d609df7f65522e0a9cba946\", \"timestamp\": 1750011100619, \"transactions\": [\"{\\\"sender\\\":\\\"Zilong\\\",\\\"recipient\\\":\\\"Gusion\\\",\\\"amount\\\":100}\"]}"
+            "block": "{\"hash\": \"0000c1a1da40f8821861f1d9b93b6bd955672ec43a87a106bb80e9aa1e8b0649\", \"index\": 2, \"nonce\": 54013, \"prev_hash\": \"00007c9023fea2692e700363bfa72c581bb5195a4321213d092d82cb5e47131c\", \"timestamp\": 1750012670140, \"transactions\": [\"Transaction { sender: \\\"Balmond\\\", recipient: \\\"Nana\\\", amount: 100 }\"]}"
         }
     }
 }
