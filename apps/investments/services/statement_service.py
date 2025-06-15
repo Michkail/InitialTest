@@ -38,13 +38,32 @@ class StatementService:
 class InvestmentService:
     def calculate_portfolio_performance(self, user):
         investments = UserInvestment.objects.filter(user=user)
-        total_invested = sum(i.amount_invested for i in investments)
-        current_total = sum(i.current_value for i in investments)
 
-        if total_invested == 0:
-            return 0
-        
-        return round(((current_total - total_invested) / total_invested) * 100, 2)
+        if not investments.exists():
+            raise ValueError("User has no investments")
+
+        total_invested = sum(i.amount_invested for i in investments)
+        total_value = sum(i.current_value for i in investments)
+        total_profit_loss = total_value - total_invested
+        portfolio_roi_percentage = 0.0
+
+        if total_invested > 0:
+            portfolio_roi_percentage = round(((total_value - total_invested) / total_invested) * 100, 2)
+
+        best = max(investments, key=lambda x: x.current_value - x.amount_invested)
+        worst = min(investments, key=lambda x: x.current_value - x.amount_invested)
+
+        return {
+            "total_invested": total_invested,
+            "total_value": total_value,
+            "total_profit_loss": total_profit_loss,
+            "active_investments": investments.filter(is_active=True).count(),
+            "best_performing": best.asset_name,
+            "worst_performing": worst.asset_name,
+            "portfolio_roi_percentage": portfolio_roi_percentage,
+        }
+
+
 
     def get_investment_insights(self, user):
         investments = UserInvestment.objects.filter(user=user)

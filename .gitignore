@@ -5,7 +5,15 @@ build/
 dist/
 wheels/
 *.egg-info
+logs/audit.log
 
 # Virtual environments
 .venv
 .env
+
+# Rust
+engine/debug/
+engine/target/
+engine/**/*.rs.bk
+engine/*.pdb
+engine/**/mutants.out*/

@@ -26,5 +26,5 @@ urlpatterns = [
     path('api/v2/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v2/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v2/investments/', include("apps.investments.urls")),
-    path('1graphql/', GraphQLView.as_view(graphiql=True, schema=schema))
+    path('graphql/', GraphQLView.as_view(graphiql=True, schema=schema))
 ]

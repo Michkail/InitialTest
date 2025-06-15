@@ -22,4 +22,5 @@ dependencies = [
     "reportlab>=4.4.1",
     "requests>=2.32.3",
     "scikit-learn>=1.7.0",
+    "starlette>=0.47.0",
 ]

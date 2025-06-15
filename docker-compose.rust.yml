@@ -1,0 +1,14 @@
+services:
+  engine:
+    image: orchest-investment:1.0.0
+    container_name: investment-engine
+    restart: always
+    command: ["/usr/local/bin/engine"]
+    environment:
+      TZ: "Asia/Jakarta"
+    volumes:
+      - .:/app
+    ports:
+      - "3030:3030"
+    env_file:
+      - .env

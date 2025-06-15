@@ -28,34 +28,33 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
 
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = config('SECURE_SSL', default=False, cast=bool)
 
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
 
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 CORS_ALLOWED_ORIGINS = config('ALLOWED_CORS', default=[], cast=Csv())
 
 CSRF_TRUSTED_ORIGINS = config('TRUSTED_CSRF', default=[], cast=Csv())
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
 
 USE_X_FORWARDED_HOST = config('FORWARDED_HOST', default=False, cast=bool)
 
-
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
 
     # Additional Libs
-    'graphene_django',
     'channels',
     'django_celery_beat',
+    'graphene_django',
+    'graphql_jwt',
 
     # Apps
     'apps.analytics',
@@ -119,20 +118,22 @@ TEMPLATES = [
 GRAPHENE = {
     "SCHEMA": "config.schema.schema",
     "MIDDLEWARE": [
-        "django_graphql_jwt.middleware.JSONWebTokenMiddleware",
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],
 }
 
-
 WSGI_APPLICATION = 'config.wsgi.application'
 
-ASGI_APPLICATION = 'config.routing.application'
+ASGI_APPLICATION = 'config.asgi.application'
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(config('CHANNEL_HOST'), 6379)]
+            "hosts": [{
+                "address": (config('CHANNEL_HOST'), 6379),
+                "timeout": 3
+            }]
         }
     }
 }
@@ -141,6 +142,10 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": config('REDIS_LOCATION'),
+        "OPTIONS": {
+            "socket_connect_timeout": 3,
+            "socket_timeout": 3
+        }
     }
 }
 
@@ -207,6 +212,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -225,6 +232,6 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    "django_graphql_jwt.backends.JSONWebTokenBackend",
+    "graphql_jwt.backends.JSONWebTokenBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]

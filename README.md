@@ -392,7 +392,8 @@ mutation {
         purchaseDate: "2024-04-01T00:00:00Z",
         currentValue: "5100.00",
         isActive: true,
-        currencyId: 1
+        currencyId: 1,
+        yieldRate: "5.00"
     }) {
         investment {
             id
@@ -402,6 +403,7 @@ mutation {
         }
     }
 }
+
 ```
 ###### response
 ```json
@@ -570,6 +572,83 @@ query {
         network
         contractAddress
         decimalPlaces
+    }
+}
+```
+
+## GraphQL Guidance for Blockchain
+### All Block
+###### query | allBlocks
+```graphql
+query {
+    allBlocks
+}
+```
+###### response
+```json
+{
+    "data": {
+        "allBlocks": "[{\"hash\": \"e24d032c5906e35f8da2ff39ccde24df3d4b23ea9d609df7f65522e0a9cba946\", \"index\": 0, \"prev_hash\": \"0\", \"timestamp\": 1750000581506, \"transactions\": []}]"
+    }
+}
+```
+
+### Latest Block
+###### query | latestBlock
+```graphql
+query {
+    latestBlock
+}
+```
+###### response
+```json
+{
+    "data": {
+        "latestBlock": "{\"hash\": \"e24d032c5906e35f8da2ff39ccde24df3d4b23ea9d609df7f65522e0a9cba946\", \"index\": 0, \"prev_hash\": \"0\", \"timestamp\": 1750000581506, \"transactions\": []}"
+    }
+}
+```
+
+### Create Transaction
+###### mutation | submitTransaction
+```graphql
+mutation {
+    submitTransaction(sender: "Zilong", recipient: "Gusion", amount: 100) {
+        ok
+        message
+    }
+}
+```
+###### response
+```json
+{
+    "data": {
+        "submitTransaction": {
+            "ok": true,
+            "message": "Transaction received"
+        }
+    }
+}
+```
+
+### Block Mining
+###### mutation | mineBlock
+```graphql
+mutation {
+    mineBlock {
+        ok
+        block
+    }
+}
+```
+###### response
+```json
+{
+    "data": {
+        "mineBlock": {
+            "ok": true,
+            "block": "{\"hash\": \"e4cb8377b0d7ab94cd465f7888a9a81654d14cb76665a79d6fee8307ccc37605\", \"index\": 1, \"prev_hash\": \"e24d032c5906e35f8da2ff39ccde24df3d4b23ea9d609df7f65522e0a9cba946\", \"timestamp\": 1750011100619, \"transactions\": [\"{\\\"sender\\\":\\\"Zilong\\\",\\\"recipient\\\":\\\"Gusion\\\",\\\"amount\\\":100}\"]}"
+        }
     }
 }
 ```
