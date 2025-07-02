@@ -3,7 +3,7 @@ services:
     image: orchest-investment:1.0.0
     container_name: investment-serv
     restart: always
-    command: ["sh", "-c", "uv run manage.py makemigrations && uv run manage.py migrate && uv run daphne -b 0.0.0.0 -p 8088 config.asgi:application"]
+    command: ["sh", "-c", "uv run manage.py makemigrations && uv run manage.py migrate && uv run manage.py collectstatic --no-input && uv run daphne -b 0.0.0.0 -p 8088 config.asgi:application"]
     environment:
       TZ: "Asia/Jakarta"
     volumes:

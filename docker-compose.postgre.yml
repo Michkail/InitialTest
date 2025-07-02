@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:17.4
-    container_name: cont-psql
+    container_name: cont-postgre
     restart: always
     environment:
       TZ: "Asia/Jakarta"

@@ -1,11 +1,9 @@
-# Stage 1 
 FROM rust:1.77-slim AS builder
 
 WORKDIR /engine
 COPY engine/ /engine/
 RUN cargo build --release
 
-# Stage 2
 FROM python:3.11-slim
 LABEL authors="Michkail Piter"
 

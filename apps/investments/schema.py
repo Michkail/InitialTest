@@ -1,10 +1,10 @@
 import graphene
 from decimal import Decimal
-from django.utils.timezone import now
 from graphene_django.types import DjangoObjectType
 from graphql_jwt.decorators import login_required
 from apps.investments.models import UserInvestment, Currency, UserWallet, YieldPayment
 from apps.investments.services.statement_service import InvestmentService
+
 
 class CurrencyType(DjangoObjectType):
     class Meta:
@@ -18,14 +18,13 @@ class InvestmentType(DjangoObjectType):
 
     class Meta:
         model = UserInvestment
-        fields = (
-            "id", "asset_name", "amount_invested", "purchase_date",
-            "current_value", "is_active", "currency"
-        )
+        fields = ("id", "asset_name", "amount_invested", "purchase_date",
+                  "current_value", "is_active", "currency")
 
     def resolve_profit_loss(self, info):
         try:
             return str(Decimal(self.current_value) - Decimal(self.amount_invested))
+        
         except:
             return "0.00"
 
@@ -34,9 +33,12 @@ class InvestmentType(DjangoObjectType):
             amount = Decimal(self.amount_invested)
             current = Decimal(self.current_value)
             diff = current - amount
+
             if amount == 0:
                 return "0.00"
+            
             return f"{(diff / amount * 100):.2f}"
+        
         except:
             return "0.00"
 

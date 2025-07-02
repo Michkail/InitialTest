@@ -1,5 +1,6 @@
 mod block;
 mod chain;
+mod crypto;
 mod rpc;
 mod transaction;
 

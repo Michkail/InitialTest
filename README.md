@@ -341,10 +341,6 @@ Bearer <access_token>
 mutation {
     tokenAuth(username: "admin", password: "admin") {
         token
-        refreshToken
-        payload {
-            username
-        }
     }
 }
 ```
@@ -353,11 +349,7 @@ mutation {
 {
     "data": {
         "tokenAuth": {
-            "token": "<access_token>",
-            "refreshToken": "<refresh_token>",
-            "payload": {
-                "username": "admin"
-            }
+            "token": "<access_token>"
         }
     }
 }
@@ -366,7 +358,7 @@ mutation {
 ###### mutation | refreshToken
 ```graphql
 mutation {
-    refreshToken(refreshToken: "<token>") {
+    refreshToken(token: "<token>") {
         token
     }
 }
@@ -403,7 +395,12 @@ mutation {
         }
     }
 }
-
+```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
+}
 ```
 ###### response
 ```json
@@ -438,6 +435,12 @@ query {
             averageInvestmentSize
         }
     }
+}
+```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
 }
 ```
 ###### response
@@ -479,6 +482,12 @@ query {
             network
         }
     }
+}
+```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
 }
 ```
 ###### response
@@ -524,6 +533,12 @@ query {
     }
 }
 ```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
+}
+```
 
 ### List Yield Payments
 ###### query | yieldPayment
@@ -544,6 +559,12 @@ query {
     }
 }
 ```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
+}
+```
 
 ### List User Wallets
 ###### query | wallets
@@ -561,6 +582,12 @@ query {
     }
 }
 ```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
+}
+```
 
 ### List Available Currencies 
 ###### query | currencies
@@ -575,6 +602,12 @@ query {
     }
 }
 ```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
+}
+```
 
 ## GraphQL Guidance for Blockchain
 ### All Block
@@ -582,6 +615,12 @@ query {
 ```graphql
 query {
     allBlocks
+}
+```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
 }
 ```
 ###### response
@@ -600,6 +639,12 @@ query {
     latestBlock
 }
 ```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
+}
+```
 ###### response
 ```json
 {
@@ -613,10 +658,21 @@ query {
 ###### mutation | submitTransaction
 ```graphql
 mutation {
-    submitTransaction(sender: "Zilong", recipient: "Gusion", amount: 100) {
+    submitTransaction(
+        recipient: "BASE64_RECIPIENT_PUBKEY"
+        amount: 500
+        timestamp: 1718372712221
+        signature: "BASE64_SIGNATURE"
+    ) {
         ok
         message
     }
+}
+```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
 }
 ```
 ###### response
@@ -625,7 +681,7 @@ mutation {
     "data": {
         "submitTransaction": {
             "ok": true,
-            "message": "Transaction received"
+            "message": "Transaction submitted."
         }
     }
 }
@@ -637,8 +693,21 @@ mutation {
 mutation {
     mineBlock {
         ok
-        block
+        block {
+            index
+            hash
+            prevHash
+            nonce
+            timestamp
+            transactions
+        }
     }
+}
+```
+###### headers
+```json
+{
+    "Authorization": "JWT <token>"
 }
 ```
 ###### response
@@ -647,7 +716,14 @@ mutation {
     "data": {
         "mineBlock": {
             "ok": true,
-            "block": "{\"hash\": \"0000c1a1da40f8821861f1d9b93b6bd955672ec43a87a106bb80e9aa1e8b0649\", \"index\": 2, \"nonce\": 54013, \"prev_hash\": \"00007c9023fea2692e700363bfa72c581bb5195a4321213d092d82cb5e47131c\", \"timestamp\": 1750012670140, \"transactions\": [\"Transaction { sender: \\\"Balmond\\\", recipient: \\\"Nana\\\", amount: 100 }\"]}"
+            "block": {
+                "index": 1,
+                "hash": "0000de4d8da34cfc6ca4742a004899fc03d8042536e40daec30fb24107e83436",
+                "prevHash": "000075f693f4e1db105beb39b57f430ee060e89e8765f2201cf803c7a18b2578",
+                "nonce": 16566,
+                "timestamp": 1750103534709,
+                "transactions": []
+            }
         }
     }
 }

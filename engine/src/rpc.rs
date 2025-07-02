@@ -1,10 +1,14 @@
 use jsonrpc_core::{IoHandler, Params, Value};
-use std::sync::{Arc, Mutex};
+use jsonrpc_http_server::ServerBuilder;
 use std::env;
 use std::path::Path;
+use std::sync::{Arc, Mutex};
+use serde_json::json;
+
 use dotenvy::from_path;
 
 use crate::chain::Blockchain;
+use crate::crypto::generate_keypair;
 use crate::transaction::Transaction;
 
 pub fn start_rpc_server(blockchain: Arc<Mutex<Blockchain>>) {
@@ -20,14 +24,27 @@ pub fn start_rpc_server(blockchain: Arc<Mutex<Blockchain>>) {
     let blockchain_clone = blockchain.clone();
     io.add_sync_method("submitTransaction", move |params: Params| {
         let tx: Transaction = params.parse().unwrap();
+
+        if !tx.is_signature_valid() {
+            return Ok(Value::String("Invalid signature".into()));
+        }
+
         let mut bc = blockchain_clone.lock().unwrap();
         bc.add_transaction(tx);
-        Ok(Value::String("Transaction received".into()))
+
+        Ok(Value::String("Transaction added to mempool".into()))
     });
 
     let blockchain_clone = blockchain.clone();
     io.add_sync_method("mineBlock", move |_| {
         let mut bc = blockchain_clone.lock().unwrap();
+    
+        if !bc.is_chain_valid() {
+            return Ok(serde_json::json!({
+                "error": "Chain is invalid. Mining aborted."
+            }));
+        }
+    
         let block = bc.mine_block();
         Ok(serde_json::to_value(block).unwrap())
     });
@@ -45,7 +62,20 @@ pub fn start_rpc_server(blockchain: Arc<Mutex<Blockchain>>) {
         Ok(serde_json::to_value(&bc.chain).unwrap())
     });
 
-    let server = jsonrpc_http_server::ServerBuilder::new(io)
+    io.add_sync_method("generateKeypair", |_| {
+        let (public_key, private_key) = generate_keypair();
+        Ok(serde_json::json!({
+            "publicKey": public_key,
+            "privateKey": private_key,
+        }))
+    });
+
+    io.add_sync_method("isChainValid", move |_| {
+        let bc = blockchain.lock().unwrap();
+        Ok(json!(bc.is_chain_valid()))
+    });    
+
+    let server = ServerBuilder::new(io)
         .start_http(&bind_addr.parse().unwrap())
         .unwrap();
 
