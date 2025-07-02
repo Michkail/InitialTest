@@ -17,11 +17,14 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from graphene_django.views import GraphQLView
+from .schema import schema
 
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/v1/investments/', include("apps.investments.urls"))
+    path('api/v2/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v2/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v2/investments/', include("apps.investments.urls")),
+    path('graphql/', GraphQLView.as_view(graphiql=True, schema=schema))
 ]

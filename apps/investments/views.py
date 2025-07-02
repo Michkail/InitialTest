@@ -1,10 +1,13 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.db.models import Sum, F
+from django.db import transaction
 from django.utils import timezone
 from .models import UserInvestment, TransactionLog, TransactionChoices
 from .serializers import UserInvestmentSerializer, CreateUserInvestmentSerializer
-from .services import InvestmentService
+from .services.statement_service import InvestmentService
 import uuid
 
 
@@ -12,7 +15,11 @@ class InvestmentListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return UserInvestment.objects.filter(user=self.request.user).order_by('-purchase_date')
+        # return UserInvestment.objects.filter(user=self.request.user).order_by('-purchase_date')
+        return (UserInvestment.objects.select_related('user', 'currency')
+                .prefetch_related('yield_payments')
+                .filter(user=self.request.user)
+                .order_by('-purchase_date'))
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -58,3 +65,20 @@ class InvestmentSummaryView(generics.GenericAPIView):
             "portfolio_roi_percentage": performance,
             "insights": insights
         })
+
+
+class BulkInvestmentCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request):
+        data = request.data
+
+        if not isinstance(data, list):
+            return Response({"detail": "Expected a list of objects."}, status=400)
+        
+        serializer = CreateUserInvestmentSerializer(data=data, many=True)
+        serializer.is_valid(raise_exception=True)
+        investments = serializer.save(user=request.user)
+
+        return Response({"created": len(investments)}, status=status.HTTP_201_CREATED)

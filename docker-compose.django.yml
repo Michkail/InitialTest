@@ -1,0 +1,52 @@
+services:
+  web:
+    image: orchest-investment:1.0.0
+    container_name: investment-serv
+    restart: always
+    command: ["sh", "-c", "uv run manage.py makemigrations && uv run manage.py migrate && uv run manage.py collectstatic --no-input && uv run daphne -b 0.0.0.0 -p 8088 config.asgi:application"]
+    environment:
+      TZ: "Asia/Jakarta"
+    volumes:
+      - .:/app
+    ports:
+      - "8088:8088"
+    env_file:
+      - .env
+
+  worker:
+    image: orchest-investment:1.0.0
+    container_name: investment-worker
+    restart: always
+    command: ["sh", "-c", "uv run celery -A config worker -l info"]
+    environment:
+      TZ: "Asia/Jakarta"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+
+  beat:
+    image: orchest-investment:1.0.0
+    container_name: investment-beat
+    restart: always
+    command: ["sh", "-c", "uv run celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"]
+    environment:
+      TZ: "Asia/Jakarta"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+
+  flower:
+    image: orchest-investment:1.0.0
+    container_name: investment-flower
+    restart: always
+    command: ["sh", "-c", "uv run celery -A config flower --port=5555"]
+    environment:
+      TZ: "Asia/Jakarta"
+    volumes:
+      - .:/app
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,24 +21,48 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-23_&r3x$lo^!#8x+x%2x13#ebe3#b=hww4+n!-ckm!c@$)!ux6'
+SECRET_KEY = config('KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
 
+SECURE_SSL_REDIRECT = config('SECURE_SSL', default=False, cast=bool)
+
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
+
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+CORS_ALLOWED_ORIGINS = config('ALLOWED_CORS', default=[], cast=Csv())
+
+CSRF_TRUSTED_ORIGINS = config('TRUSTED_CSRF', default=[], cast=Csv())
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
+
+USE_X_FORWARDED_HOST = config('FORWARDED_HOST', default=False, cast=bool)
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
-    'apps.investments'
+
+    # Additional Libs
+    'channels',
+    'django_celery_beat',
+    'graphene_django',
+    'graphql_jwt',
+
+    # Apps
+    'apps.analytics',
+    'apps.integrations',
+    'apps.investments',
+    'apps.notifications',
+    'apps.users',
+    'apps.wallets'
 ]
 
 MIDDLEWARE = [
@@ -49,6 +74,29 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE += [
+    'config.middleware.audit_middleware.AuditLogMiddleware',
+]
+
+LOGGING = {
+    'version': 1,
+    'handlers': {
+        'audit_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/audit.log',
+        },
+    },
+    'loggers': {
+        'audit': {
+            'handlers': ['audit_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -67,16 +115,64 @@ TEMPLATES = [
     },
 ]
 
+GRAPHENE = {
+    "SCHEMA": "config.schema.schema",
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+    ],
+}
+
 WSGI_APPLICATION = 'config.wsgi.application'
 
+ASGI_APPLICATION = 'config.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [{
+                "address": (config('CHANNEL_HOST'), 6379),
+                "timeout": 3
+            }]
+        }
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": config('REDIS_LOCATION'),
+        "OPTIONS": {
+            "socket_connect_timeout": 3,
+            "socket_timeout": 3
+        }
+    }
+}
+
+CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND')
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+DATABASE_ROUTERS = ['config.db_routers.AnalyticsRouter']
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('POSTGRES_DB'),
+        'HOST': config('POSTGRES_HOST'),
+        'PORT': config('POSTGRES_PORT'),
+        'PASSWORD': config('POSTGRES_PASS'),
+        'USER': config('POSTGRES_USER')
+    },
+    'replica': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('REPL_DB'),
+        'HOST': config('REPL_HOST'),
+        'PORT': config('REPL_PORT'),
+        'PASSWORD': config('REPL_PASS'),
+        'USER': config('REPL_USER')
     }
 }
 
@@ -116,11 +212,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -130,3 +230,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'apps.investments.pagination.InvestmentPagination',
     'PAGE_SIZE': 10
 }
+
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
