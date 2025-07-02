@@ -1,27 +1,33 @@
 pipeline {
-  agent any
-
-  environment {
-    IMAGE = "orchest-investment"
-    TAG = "local"
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:24.0.7-cli
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - name: docker-sock
+      mountPath: /var/run/docker.sock
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+"""
+    }
   }
-
   stages {
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t $IMAGE:$TAG .'
-      }
-    }
-
-    stage('Apply to Kubernetes') {
-      steps {
-        sh 'kubectl apply -f k8s/'
-      }
-    }
-
-    stage('Restart Deployment') {
-      steps {
-        sh 'kubectl rollout restart deployment investment-web'
+        container('docker') {
+          sh 'docker version'
+          sh 'docker build -t orchest-investment:local .'
+        }
       }
     }
   }
